@@ -19,6 +19,5 @@ public class AuthActivity extends DaggerAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
-        Log.d(TAG, "onCreate: " + s22);
     }
 }

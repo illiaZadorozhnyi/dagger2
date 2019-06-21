@@ -18,12 +18,17 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Component(modules = {
         AndroidSupportInjectionModule.class,
         ActivityBuilderModule.class,
+        AppModule.class,
+
 })
 public interface AppComponent extends AndroidInjector<BaseApplication> {
 
     @Component.Builder
     interface Builder {
 
+//        This binding means that every time when AppComponent is created, it is going to have
+//        Application bind to it and available
+//        This makes it available in all the modules of AppComponent !!!
         @BindsInstance
         Builder application(Application application);
 
