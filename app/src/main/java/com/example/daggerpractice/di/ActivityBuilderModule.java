@@ -1,9 +1,9 @@
 package com.example.daggerpractice.di;
 
-import com.example.daggerpractice.AuthActivity;
+import com.example.daggerpractice.di.auth.AuthViewModelsModule;
+import com.example.daggerpractice.ui.auth.AuthActivity;
 
 import dagger.Module;
-import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
 // MODULES are places for dependencies to live. From here we add them to components
@@ -13,7 +13,11 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class ActivityBuilderModule {
 
     //    1. Letting Dagger know that AuthActivity is a potential client
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(
+            modules = { AuthViewModelsModule.class,
+
+            }
+    )
     abstract AuthActivity contributeAuthActivity();
 
 }
