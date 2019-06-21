@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.example.daggerpractice.BaseApplication;
 
+import javax.inject.Singleton;
+
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjector;
@@ -15,6 +17,8 @@ import dagger.android.support.AndroidSupportInjectionModule;
 // Activities/Fragments == CLIENTS
 
 // this is required for us to be able to return a built proper DaggerAppComponent from BaseApplication after rebuilding
+
+@Singleton
 @Component(modules = {
         AndroidSupportInjectionModule.class,
         ActivityBuilderModule.class,
