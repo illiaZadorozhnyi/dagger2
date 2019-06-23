@@ -60,4 +60,8 @@ dependencies {
 
     // Retrofit 2 adapter library (convert Retrofit Call object to Observable or Flowable)
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+
+    // Reactive Streams (convert Observable to LiveData)
+    def reactivestreams_version = "1.1.1"
+    implementation "android.arch.lifecycle:reactivestreams:$reactivestreams_version"
 }

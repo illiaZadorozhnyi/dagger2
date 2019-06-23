@@ -1,7 +1,9 @@
 package com.example.daggerpractice.ui.auth;
 
-import android.util.Log;
-
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.LiveDataReactiveStreams;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.daggerpractice.models.User;
@@ -9,59 +11,60 @@ import com.example.daggerpractice.network.auth.AuthApi;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class AuthViewModel extends ViewModel {
 
-    private static final String TAG = "AuthViewModel";
-
     private final AuthApi authApi;
+
+    private MediatorLiveData<AuthResource<User>> authUser = new MediatorLiveData<>();
 
     @Inject
     public AuthViewModel(AuthApi authApi) {
         this.authApi = authApi;
+    }
 
-//        these below are just to verify that injection is working properly
-//        =============================
-        Log.d(TAG, "AuthViewModel: AuthViewModel is working...");
+    public void authenticateWithId(int userId) {
+//    when user's status get's set, I want to show the progress bar
+        authUser.setValue(AuthResource.loading((User) null));
 
-        if (this.authApi == null) {
-            Log.d(TAG, "AuthViewModel: AuthApi is NULL");
-        } else {
-            Log.d(TAG, "AuthViewModel: AuthApi is PRESENT and NOT NULL");
-        }
-//        =============================
+        final LiveData<AuthResource<User>> source = LiveDataReactiveStreams.fromPublisher(
+                authApi.getUser(userId)
+                        .onErrorReturn(new Function<Throwable, User>() {
+                            @Override
+                            public User apply(Throwable throwable) throws Exception {
+                                User errorUser = new User();
+                                errorUser.setId(-1);
+                                return errorUser;
+                            }
+                        })
+                        .map(new Function<User, AuthResource<User>>() {
+                            @Override
+                            public AuthResource<User> apply(User user) throws Exception {
+                                if (user.getId() == -1) {
+                                    return AuthResource.error("Could not authenticate", (User) null);
+                                }
 
-//        test request to check retrofit hitting api and getting User object below
+                                return AuthResource.authenticated(user);
+                            }
+                        })
 
-        authApi.getUser(1)
-                .toObservable()
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<User>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        
-                    }
+                        .subscribeOn(Schedulers.io())
+        );
+        authUser.addSource(source, new Observer<AuthResource<User>>() {
+            @Override
+            public void onChanged(AuthResource<User> user) {
+                authUser.setValue(user);
+                authUser.removeSource(source);
+            }
+        });
+    }
 
-                    @Override
-                    public void onNext(User user) {
-                        Log.d(TAG, "onNext from AuthApi: should be background thread " + Thread.currentThread().getName());
-                        Log.d(TAG, "onNext from AuthApi: users email address was retrieved: " + user.getEmail());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, "onError from AuthApi: " + e);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-
+    public LiveData<AuthResource<User>> observeUser() {
+        return authUser;
     }
 
 }
+
+
