@@ -91,7 +91,7 @@ public class AuthActivity extends DaggerAppCompatActivity implements View.OnClic
     }
 
     private void subscribeObservers() {
-        authViewModel.observeUser().observe(this, new Observer<AuthResource<User>>() {
+        authViewModel.observeAuthState().observe(this, new Observer<AuthResource<User>>() {
             @Override
             public void onChanged(AuthResource<User> userAuthResource) {
                 if (userAuthResource != null) {
@@ -109,6 +109,7 @@ public class AuthActivity extends DaggerAppCompatActivity implements View.OnClic
 
                         case ERROR: {
                             setProgressBar(false);
+                            Log.d(TAG, "onChangedError: could not authenticate the user, check the username entered");
                             Toast.makeText(AuthActivity.this, userAuthResource.message
                                     + "\nDid you enter a number between 1 and 10? ", Toast.LENGTH_SHORT).show();
                             break;

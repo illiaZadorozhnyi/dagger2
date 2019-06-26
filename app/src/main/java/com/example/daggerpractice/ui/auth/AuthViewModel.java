@@ -1,11 +1,14 @@
 package com.example.daggerpractice.ui.auth;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.example.daggerpractice.SessionManager;
 import com.example.daggerpractice.models.User;
 import com.example.daggerpractice.network.auth.AuthApi;
 
@@ -16,20 +19,25 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AuthViewModel extends ViewModel {
 
-    private final AuthApi authApi;
+    private static final String TAG = "AuthViewModel";
 
-    private MediatorLiveData<AuthResource<User>> authUser = new MediatorLiveData<>();
+    private final AuthApi authApi;
+    private SessionManager sessionManager;
+
 
     @Inject
-    public AuthViewModel(AuthApi authApi) {
+    public AuthViewModel(AuthApi authApi, SessionManager sessionManager) {
         this.authApi = authApi;
+        this.sessionManager = sessionManager;
     }
 
     public void authenticateWithId(int userId) {
-//    when user's status get's set, I want to show the progress bar
-        authUser.setValue(AuthResource.loading((User) null));
+        Log.d(TAG, "authenticateWithId: attempting to log in...");
+        sessionManager.authenticateWithId(queryUserId(userId));
+    }
 
-        final LiveData<AuthResource<User>> source = LiveDataReactiveStreams.fromPublisher(
+    private LiveData<AuthResource<User>> queryUserId(int userId) {
+        LiveData<AuthResource<User>> source = LiveDataReactiveStreams.fromPublisher(
                 authApi.getUser(userId)
                         .onErrorReturn(new Function<Throwable, User>() {
                             @Override
@@ -52,17 +60,11 @@ public class AuthViewModel extends ViewModel {
 
                         .subscribeOn(Schedulers.io())
         );
-        authUser.addSource(source, new Observer<AuthResource<User>>() {
-            @Override
-            public void onChanged(AuthResource<User> user) {
-                authUser.setValue(user);
-                authUser.removeSource(source);
-            }
-        });
+        return source;
     }
 
-    public LiveData<AuthResource<User>> observeUser() {
-        return authUser;
+    public LiveData<AuthResource<User>> observeAuthState() {
+        return sessionManager.getAuthUser();
     }
 
 }
