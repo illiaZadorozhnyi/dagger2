@@ -27,7 +27,7 @@ public class AuthResource<T> {
         return new AuthResource<>(AuthStatus.ERROR, data, msg);
     }
 
-    public static <T> AuthResource<T> loading (T data) {
+    public static <T> AuthResource<T> loading (@Nullable T  data) {
         return new AuthResource<>(AuthStatus.LOADING, data, null);
     }
 
