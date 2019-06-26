@@ -1,5 +1,6 @@
 package com.example.daggerpractice.ui.auth;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.opengl.Visibility;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.bumptech.glide.RequestManager;
 import com.example.daggerpractice.R;
 import com.example.daggerpractice.models.User;
+import com.example.daggerpractice.ui.main.MainActivity;
 import com.example.daggerpractice.viewmodels.ViewModelProviderFactory;
 
 import javax.inject.Inject;
@@ -75,6 +77,12 @@ public class AuthActivity extends DaggerAppCompatActivity implements View.OnClic
         }
     }
 
+    private void onLoginSuccess() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void attemptLogin() {
         if (TextUtils.isEmpty(userIdInput.getText().toString())) {
             return;
@@ -104,6 +112,7 @@ public class AuthActivity extends DaggerAppCompatActivity implements View.OnClic
                         case AUTHENTICATED: {
                             setProgressBar(false);
                             Log.d(TAG, "onChanged: LOGIN SUCCESS " + userAuthResource.data.getEmail());
+                            onLoginSuccess();
                             break;
                         }
 
