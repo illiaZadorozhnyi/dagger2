@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.daggerpractice.BaseActivity;
 import com.example.daggerpractice.R;
+import com.example.daggerpractice.ui.main.profile.ProfileFragment;
 
 public class MainActivity extends BaseActivity {
 
@@ -24,7 +25,9 @@ public class MainActivity extends BaseActivity {
 
         Log.d(TAG, "onCreate: inside onCreate of the MainActivity...");
 
-        Toast.makeText(this, "This is Main Activity", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "This is Main Activity", Toast.LENGTH_SHORT).show();
+
+        testFragment();
     }
 
     @Override
@@ -43,6 +46,13 @@ public class MainActivity extends BaseActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void testFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_container, new ProfileFragment())
+                .commit();
+        Log.d(TAG, "testFragment: inside Fragment...");
     }
 }
 

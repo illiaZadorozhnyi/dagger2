@@ -41,7 +41,7 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
                         }
 
                         case AUTHENTICATED: {
-                            Log.d(TAG, "onChanged: LOGIN SUCCESS " + userAuthResource.data.getEmail());
+                            Log.d(TAG, "onChanged: LOGIN SUCCESS from BaseActivity" + userAuthResource.data.getEmail());
                             break;
                         }
 
