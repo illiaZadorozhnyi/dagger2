@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -25,8 +24,6 @@ public class MainActivity extends BaseActivity {
 
         Log.d(TAG, "onCreate: inside onCreate of the MainActivity...");
 
-//        Toast.makeText(this, "This is Main Activity", Toast.LENGTH_SHORT).show();
-
         testFragment();
     }
 
@@ -43,9 +40,10 @@ public class MainActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.logout:
                 sessionManager.logOut();
-                break;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private void testFragment() {
