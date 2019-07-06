@@ -1,17 +1,23 @@
 package com.example.daggerpractice.ui.main.posts;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daggerpractice.R;
+import com.example.daggerpractice.models.Post;
+import com.example.daggerpractice.ui.main.Resource;
 import com.example.daggerpractice.viewmodels.ViewModelProviderFactory;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -39,5 +45,19 @@ public class PostsFragment extends DaggerFragment {
         recyclerView = view.findViewById(R.id.recycler_view);
 
         postsViewModel = ViewModelProviders.of(this, viewModelProviderFactory).get(PostsViewModel.class);
+
+        subscribeObservers();
+    }
+
+    private void subscribeObservers() {
+        postsViewModel.observePosts().removeObservers(getViewLifecycleOwner());
+        postsViewModel.observePosts().observe(getViewLifecycleOwner(), new Observer<Resource<List<Post>>>() {
+            @Override
+            public void onChanged(Resource<List<Post>> listResource) {
+                if(listResource != null) {
+                    Log.d(TAG, "onChanged: inside PostsFragment, data: " + listResource.data);
+                }
+            }
+        });
     }
 }
