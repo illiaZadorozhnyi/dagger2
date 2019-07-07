@@ -14,7 +14,7 @@ import com.example.daggerpractice.models.Post;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostRecyclerAdapter extends RecyclerView.Adapter {
+public class PostRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Post> posts = new ArrayList<>();
 
