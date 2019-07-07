@@ -11,6 +11,7 @@ public class AuthModule {
 
 //    we can access this inside AuthActivity subcomponent built by ContributesAndroidInjector module section
 //    and our retrofit instance is inside parent AppComponent
+    @AuthScope
     @Provides
     static AuthApi provideAuthApi(Retrofit retrofit) {
         return retrofit.create(AuthApi.class);
